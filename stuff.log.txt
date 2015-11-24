@@ -1,26 +1,24 @@
-scaffold_173:441,041-445,606	Small inversion, MZ has inverted reads, MC has none 
+scaffold_173:441,041-445,606	Small inversion, MZ has inverted reads, MC has none	No FST information
 
-scaffold_115:2,174,860-2,188,580	Relatively Smaller Inverion, MZ clearly has more inverted reads 
+scaffold_115:2,174,860-2,188,580	Relatively Smaller Inverion, MZ clearly has more inverted reads	scaffold_115	450001	460000	0.705794 
 
-scaffold_29:5,966,217-6,476,437	Some Inverted Reads at the ends, odd insert sizes present upstream of inversion start 
+scaffold_29:5,966,217-6,476,437	Some Inverted Reads at the ends, odd insert sizes present upstream of inversion start	lots of FST bins
 
-scaffold_307:198,817-253,832	Looking at the break points both seem to have inverted reads
+scaffold_307:198,817-253,832	Looking at the break points both seem to have inverted reads	No FST information	
 
-scaffold_115:2,174,860-2,188,580	Inverted reads present in both, lot more in MZ
+scaffold_115:2,174,860-2,188,580	Inverted reads present in both, lot more in MZ	scaffold_115	450001	460000	0.705794
 
-scaffold_90:1,329,004-1,395,229	Inversions in MC at the breakpoints, lots of duplication events seem to show up in both MC and MZ
+scaffold_90:1,329,004-1,395,229	Inversions in MC at the breakpoints, lots of duplication events seem to show up in both MC and MZ	scaffold_90	1400001	1410000	0.718129
 
-scaffold_363:137,692-216,753	Some Inverted Reads present at the breakpoints in both, more in MZ
+scaffold_301:5,836-393,767	Some Inverted Reads present at the breakpoints in bot	No FST information	
 
-scaffold_301:5,836-393,767	Some Inverted Reads present at the breakpoints in bot
+scaffold_363:137,692-216,753	Inverted reads present, more in MZ, coverage is poor in this region	No FST information
 
-scaffold_363:137,692-216,753	Inverted reads present, more in MZ, coverage is poor in this region 
+scaffold_153:361,932-1,296,362	Some inverted reads at the breakpoints in both, duplication events in the inversion region	No FST information
 
-scaffold_153:361,932-1,296,362	Some inverted reads at the breakpoints in both, duplication events in the inversion region
+scaffold_78:2,294,942-3,057,621 Odd, doesnt seem to have inverted reads	4 Bins 
 
-scaffold_78:2,294,942-3,057,621 Odd, doesnt seem to have inverted reads
-
-scaffold_80:623,023-1,473,658	Inverted reads at the breakpoints, MZ seems to have more
+scaffold_80:623,023-1,473,658	Inverted reads at the breakpoints, MZ seems to have more	2 Bins, 1 bin is not in the inversion region
 
 
 
