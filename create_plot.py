@@ -19,13 +19,13 @@ def cluster_strains(folder):
     #perc_alt_inv_set = defaultdict(dict)
     #perc_ref_inv_set = defaultdict(dict)
 
-    perc_alt_inv_set = parse_geno_file(folder,True)
+    [perc_alt_inv_set,abs_alt_inv_set] = parse_geno_file(folder,True)
 
     #print prec_alt_inv_set['MC'].keys()
 
     num_features = len(perc_alt_inv_set['MC'].keys())
 
-    print num_features
+    print (num_features)
 
     feature_matrix = np.zeros((13,num_features))
     strain_labels = []
@@ -46,8 +46,8 @@ def cluster_strains(folder):
     ## Clustering Stuff
     estimator = KMeans(init='k-means++', n_clusters=2, n_init=10)
     estimator.fit(feature_matrix)
-    print estimator.labels_
-    print strain_labels
+    print (estimator.labels_)
+    print (strain_labels)
     #centroids,labels,inertia = k_means(feature_matrix,2)
     
     ## Random Forests for extracting important features
@@ -65,38 +65,29 @@ def cluster_strains(folder):
     
 
     for i in range(0,10):
-        print inversion_features[indices[i]]
+        print (inversion_features[indices[i]])
 
-def output_inversions(folder,threshold):
+def output_inversions(folder):
     """ Output to a file all the inversions above a certain threshold 
     folder : The input folder
-    threshold : alt allele frequency cut-off above which to output the inversions
     """
     
-    start_stop_matcher = re.compile("(.*):(.*)-(.*)")
-    common_inversions = []
-    abs_alt = defaultdict(dict)
-    abs_ref = defaultdict(dict)
-    perc_alt = defaultdict(dict)
+    perc_alt_alleles.abs_alt_alleles = parse_geno_file(folder,True) ## Call the parser, the returned object is a dictionary of dictionaries
 
-    abs_alt,abs_ref,perc_alt,perc_ref,common_inversions = parse_geno_file(folder,True) ## Call the parser, the returned objects are dictionary of dictionaries
+    strains = [' ','MC','CL','CM','CN','TI','DC','MS','CV','PN','AC','LF','MP','MZ']
+    strain_types = ['Sand','Sand','Sand','Sand','Sand','Sand','Sand','Sand','Rock','Rock','Rock','Rock','Rock']
 
-    FILE_HANDLE = open('output_inversions_'+str(threshold)+".tsv",'w')
-    output_write = "\t".join(common_inversions)
-    print >> FILE_HANDLE,"Strain"+"\t"+output_write
-
-    for strain in abs_alt.keys():
-        for inversion in common_inversions:
-            #if(perc_alt[strain][inversion] > threshold):
-            match = re.match(start_stop_matcher,inversion)
-                #print match.group(1)
-            start = int(match.group(2).replace(',',''))
-            stop = int(match.group(3).replace(',',''))
-            length = stop-start
-            print >> FILE_HANDLE,strain+"\t"+str(length)+"\t"+str(perc_alt[strain][inversion])+"\t"+str(perc_ref[strain][inversion])+"\t"+str(abs_alt[strain][inversion])+"\t"+str(abs_ref[strain][inversion])
-
-    FILE_HANDLE.close()
-
+    with open('out_file.txt','w') as OUT:
+        OUT.write("\t".join(strains)+"\n")
+        with open('log_file.txt','r') as LOG:
+            for line in LOG:
+                line = line.strip('\n')
+                output = []
+                output.append(line)
+                for strain in strains:
+                    if strain != " ":
+                        output.append(str(perc_alt_alleles[strain][line]))
+                OUT.write("\t".join(output)+"\n")
 
 def parse_geno_file(folder,return_flag):
     """ Parses the outputs from svviz to get the allele counts
@@ -218,36 +209,38 @@ def parse_geno_file(folder,return_flag):
                 abs_ref_inv_set[strain][inversion] = abs_ref_inv[strain][inversion]
                 perc_ref_inv_set[strain][inversion] = perc_ref_inv[strain][inversion]
 
+    with open('log_file.txt','w') as LOG_FILE:
+        for inversion in abs_alt_inv_set['MC']:
+            alternate_allele_sum_rock = 0
+            reference_allele_sum_rock = 0
+            alternate_allele_sum_sand = 0
+            reference_allele_sum_sand = 0  
+            for strain in Rock:
+                alternate_allele_sum_rock = alternate_allele_sum_rock + abs_alt_inv_set[strain][inversion]
+                reference_allele_sum_rock = reference_allele_sum_rock + abs_ref_inv_set[strain][inversion]
 
-    for inversion in abs_alt_inv_set['MC']:
-        alternate_allele_sum_rock = 0
-        reference_allele_sum_rock = 0
-        alternate_allele_sum_sand = 0
-        reference_allele_sum_sand = 0  
-        for strain in Rock:
-            alternate_allele_sum_rock = alternate_allele_sum_rock + abs_alt_inv_set[strain][inversion]
-            reference_allele_sum_rock = reference_allele_sum_rock + abs_ref_inv_set[strain][inversion]
+            for strain in Sand:
+                alternate_allele_sum_sand = alternate_allele_sum_sand + abs_alt_inv_set[strain][inversion]
+                reference_allele_sum_sand = reference_allele_sum_sand + abs_ref_inv_set[strain][inversion]
 
-        for strain in Sand:
-            alternate_allele_sum_sand = alternate_allele_sum_sand + abs_alt_inv_set[strain][inversion]
-            reference_allele_sum_sand = reference_allele_sum_sand + abs_ref_inv_set[strain][inversion]
-
-        abs_alt_set['Rock'].append(alternate_allele_sum_rock)
-        perc_alt_set['Rock'].append(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock)))
+            abs_alt_set['Rock'].append(alternate_allele_sum_rock)
+            perc_alt_set['Rock'].append(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock)))
         
-        abs_alt_set['Sand'].append(alternate_allele_sum_sand)
-        perc_alt_set['Sand'].append(float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand)))
+            abs_alt_set['Sand'].append(alternate_allele_sum_sand)
+            perc_alt_set['Sand'].append(float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand)))
     
-        with open('log_file.txt','a') as LOG_FILE:
+        
             if(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock))>float(sys.argv[2]) or float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand))>float(sys.argv[2])):
-                print >> LOG_FILE,inversion 
+                LOG_FILE.write(inversion)
+                LOG_FILE.write("\n")
+                #print (inversion)
     
 
     #print "Sand : "+str(count_sand)
 
     if return_flag == True:
         #print len([abs_alt_inv_set,abs_ref_inv_set,perc_alt_inv_set,perc_ref_inv_set])
-        return perc_alt_inv_set
+        return [perc_alt_inv_set,abs_alt_inv_set]
     else:
         return [abs_alt_set,perc_alt_set]
 
@@ -479,7 +472,7 @@ S = 'MC' ## Global Plot Variables for button initializations
 D = "%"
 base = 'MC'
 if(len(sys.argv) < 3):
-    print "Run the program as : ./create_plot.py <input_folder> <threshold>"
+    print ("Run the program as : ./create_plot.py <input_folder> <threshold>")
     sys.exit()
 
 folder = sys.argv[1]
@@ -490,4 +483,4 @@ plot_alleles(folder)
 S = 'MC'
 #plot_mapqs(folder)
 cluster_strains(folder)
-#output_inversions(folder,threshold)
+output_inversions(folder)
