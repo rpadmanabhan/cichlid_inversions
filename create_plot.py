@@ -72,22 +72,30 @@ def output_inversions(folder):
     folder : The input folder
     """
     
-    perc_alt_alleles.abs_alt_alleles = parse_geno_file(folder,True) ## Call the parser, the returned object is a dictionary of dictionaries
+    [perc_alt_alleles,abs_alt_alleles] = parse_geno_file(folder,True) ## Call the parser, the returned object is a dictionary of dictionaries
 
     strains = [' ','MC','CL','CM','CN','TI','DC','MS','CV','PN','AC','LF','MP','MZ']
     strain_types = ['Sand','Sand','Sand','Sand','Sand','Sand','Sand','Sand','Rock','Rock','Rock','Rock','Rock']
 
-    with open('out_file.txt','w') as OUT:
-        OUT.write("\t".join(strains)+"\n")
+    with open('out_file1.txt','w') as OUT1, open('out_file2.txt','w') as OUT2:
+        OUT1.write("\t".join(strains)+"\n")
+        OUT2.write("\t".join(strains)+"\n")
         with open('log_file.txt','r') as LOG:
             for line in LOG:
                 line = line.strip('\n')
-                output = []
-                output.append(line)
+                output1 = []
+                output2 = []
+                output1.append(line)
+                output2.append(line)
                 for strain in strains:
                     if strain != " ":
-                        output.append(str(perc_alt_alleles[strain][line]))
-                OUT.write("\t".join(output)+"\n")
+                        output1.append(str(perc_alt_alleles[strain][line]))
+                        output2.append(str(abs_alt_alleles[strain][line]))
+                OUT1.write("\t".join(output1)+"\n")
+                OUT2.write("\t".join(output2)+"\n")
+
+    #subprocess.check_output('cat out_file1.txt > out_file.txt',shell=True)
+    #subprocess.check_output('cat out_file2.txt >> out_
 
 def parse_geno_file(folder,return_flag):
     """ Parses the outputs from svviz to get the allele counts
