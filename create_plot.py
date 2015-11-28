@@ -74,6 +74,8 @@ def output_inversions(folder):
     
     [perc_alt_alleles,abs_alt_alleles] = parse_geno_file(folder,True) ## Call the parser, the returned object is a dictionary of dictionaries
 
+    cluster_strains(folder)
+
     strains = [' ','MC','CL','CM','CN','TI','DC','MS','CV','PN','AC','LF','MP','MZ']
     strain_types = ['Sand','Sand','Sand','Sand','Sand','Sand','Sand','Sand','Rock','Rock','Rock','Rock','Rock']
 
@@ -489,6 +491,5 @@ threshold = float(sys.argv[2])
 plot_alleles(folder)
 
 S = 'MC'
-#plot_mapqs(folder)
-cluster_strains(folder)
+#plot_mapqs(folde
 output_inversions(folder)
