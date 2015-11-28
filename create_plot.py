@@ -58,14 +58,14 @@ def cluster_strains(folder):
     indices = np.argsort(importances)[::-1]
 
     # Print the feature ranking
-    print("Feature ranking:")
+    #print("Feature ranking:")
     
     #for f in range(feature_matrix.shape[1]):
         #print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
     
-
-    for i in range(0,10):
-        print (inversion_features[indices[i]])
+    with open('log_file.txt','a') as LOG:
+        for i in range(0,10):
+            LOG.write(inversion_features[indices[i]]+"\n")
 
 def output_inversions(folder):
     """ Output to a file all the inversions above a certain threshold 
