@@ -11,6 +11,19 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans,k_means
 from sklearn.ensemble import ExtraTreesClassifier
 
+def create_bed(log_file):
+    """ Creates a bed file from the logfile.txt file generated earlier
+    """
+
+    with open(log_file,'r') as LOG, open('log_file.bed','w') as OUT:
+        for line in LOG:
+            line = line.rstrip('\n')
+            scaffold = line.split('\t')[0].split(':')[0]
+            start = line.split('\t')[0].split(':')[1].split('-')[0]
+            start = start.replace(',','')
+            stop = line.split('\t')[0].split(':')[1].split('-')[1]
+            stop = stop.replace(',','')
+            OUT.write(scaffold+"\t"+start+"\t"+stop+"\n")
 
 def cluster_strains(folder):
     
@@ -85,14 +98,15 @@ def output_inversions(folder):
         with open('log_file.txt','r') as LOG:
             for line in LOG:
                 line = line.strip('\n')
+                log_inversion = line.split('\t')[0]
                 output1 = []
                 output2 = []
                 output1.append(line)
                 output2.append(line)
                 for strain in strains:
                     if strain != " ":
-                        output1.append(str(perc_alt_alleles[strain][line]))
-                        output2.append(str(abs_alt_alleles[strain][line]))
+                        output1.append(str(perc_alt_alleles[strain][log_inversion]))
+                        output2.append(str(abs_alt_alleles[strain][log_inversion]))
                 OUT1.write("\t".join(output1)+"\n")
                 OUT2.write("\t".join(output2)+"\n")
 
@@ -234,14 +248,16 @@ def parse_geno_file(folder,return_flag):
                 reference_allele_sum_sand = reference_allele_sum_sand + abs_ref_inv_set[strain][inversion]
 
             abs_alt_set['Rock'].append(alternate_allele_sum_rock)
-            perc_alt_set['Rock'].append(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock)))
+            allele_freq_rock = float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock))
+            allele_freq_sand = float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand))
+            perc_alt_set['Rock'].append(allele_freq_rock)
         
             abs_alt_set['Sand'].append(alternate_allele_sum_sand)
-            perc_alt_set['Sand'].append(float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand)))
+            perc_alt_set['Sand'].append(allele_freq_sand)
     
         
-            if(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock))>float(sys.argv[2]) or float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand))>float(sys.argv[2])):
-                LOG_FILE.write(inversion)
+            if(allele_freq_rock > float(sys.argv[2]) or allele_freq_sand > float(sys.argv[2])):
+                LOG_FILE.write(inversion+"\t"+str(allele_freq_rock)+"\t"+str(allele_freq_sand))
                 LOG_FILE.write("\n")
                 #print (inversion)
     
@@ -493,3 +509,4 @@ plot_alleles(folder)
 S = 'MC'
 #plot_mapqs(folde
 output_inversions(folder)
+create_bed('log_file.txt')
