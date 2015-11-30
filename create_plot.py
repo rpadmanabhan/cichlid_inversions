@@ -11,11 +11,11 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans,k_means
 from sklearn.ensemble import ExtraTreesClassifier
 
-def create_bed(log_file):
+def create_bed(log_file,output_file):
     """ Creates a bed file from the logfile.txt file generated earlier
     """
 
-    with open(log_file,'r') as LOG, open('log_file.bed','w') as OUT:
+    with open(log_file,'r') as LOG,open(output_file,'w') as OUT:
         for line in LOG:
             line = line.rstrip('\n')
             scaffold = line.split('\t')[0].split(':')[0]
@@ -509,4 +509,4 @@ plot_alleles(folder)
 S = 'MC'
 #plot_mapqs(folde
 output_inversions(folder)
-create_bed('log_file.txt')
+create_bed('log_file.txt','log_file.bed')
