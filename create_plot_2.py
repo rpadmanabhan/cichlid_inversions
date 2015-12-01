@@ -183,8 +183,9 @@ def parse_geno_file(folder,return_flag):
     abs_ref_inv_set = defaultdict(dict)
     perc_ref_inv_set = defaultdict(dict)
 
-    Rock = ['AC', 'CL','CM','CN','TI','PN','MZ']
-    Sand = ['MC','DC','LF','MP','MS','CV']
+    Sand = ['CN','CL','CM','CN','TI','CV','MC','MS']
+    Rock = ['MZ','AC','PN','LF','MP']
+
 
 
     sand_inversions = []
@@ -225,7 +226,7 @@ def parse_geno_file(folder,return_flag):
     ordered_rock = []
 
     for inversion in common_inversions_sand.keys():
-        if(common_inversions_sand[inversion] == 6):
+        if(common_inversions_sand[inversion] == 8):
             ordered_sand.append(inversion)
             for strain in Sand:
                 abs_alt_set[strain].append(abs_alt_inv[strain][inversion])
@@ -238,7 +239,7 @@ def parse_geno_file(folder,return_flag):
 
 
     for inversion in common_inversions_rock.keys():
-        if(common_inversions_rock[inversion] == 7):
+        if(common_inversions_rock[inversion] == 5):
             ordered_rock.append(inversion)
             for strain in Rock:
                 abs_alt_set[strain].append(abs_alt_inv[strain][inversion])
@@ -452,12 +453,12 @@ def plot_alleles(folder):
     strain_matcher2 = re.compile('(.*)-(.*)')
     
     fig, ax = plt.subplots()
-    l, = plt.plot(perc_alt['MC']['Sand'],perc_alt['MC']['MC'],'bs')
+    l, = plt.plot(perc_alt['MC']['Sand'],perc_alt['MZ']['MZ'],'bs')
     ax.set_ylabel('Alternate Allele Percentage (Sand)')
-    ax.set_xlabel('Alternate Allele Percentage (MC)')
+    ax.set_xlabel('Alternate Allele Percentage (MZ)')
     
     rax1 = plt.axes([0.92, 0.1, 0.08, 0.8])
-    radio1 = RadioButtons(rax1, ('Sand-MC','Rock-MZ'), active=0)
+    radio1 = RadioButtons(rax1, ('Sand-MZ','Rock-MC'), active=0)
 
     rax2 = plt.axes([0.92, 0.9, 0.08, 0.1])
     radio2 = RadioButtons(rax2, ('%', 'Abs'), active=0)
@@ -473,17 +474,17 @@ def plot_alleles(folder):
             #strain = match.group(1)
             global base
             if(match.group(2) == 'Sand'):
-                base = 'MC'
-            else:
                 base = 'MZ'
+            else:
+                base = 'MC'
         else:
             match = re.match(strain_matcher2,strain)
             strain = match.group(1)
             #global base
             if(strain == 'Sand'):
-                base = 'MC'
-            else:
                 base = 'MZ'
+            else:
+                base = 'MC'
 
         #print D
         if(D == "%"):
