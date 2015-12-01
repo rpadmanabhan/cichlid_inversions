@@ -20,6 +20,5 @@ scaffold_78:2,294,942-3,057,621 Odd, doesnt seem to have inverted reads	4 Bins
 
 scaffold_80:623,023-1,473,658	Inverted reads at the breakpoints, MZ seems to have more	2 Bins, 1 bin is not in the inversion region
 
-
-
+scaffold_82:1,113,209-3,028,988	Many inverted reads at the breakpoints, MZ has more	2 Bins in the FST file
 

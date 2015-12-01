@@ -19,13 +19,13 @@ def cluster_strains(folder):
     #perc_alt_inv_set = defaultdict(dict)
     #perc_ref_inv_set = defaultdict(dict)
 
-    perc_alt_inv_set = parse_geno_file(folder,True)
+    [abs_alt_inv_set,perc_alt_inv_set] = parse_geno_file(folder,True)
 
     #print prec_alt_inv_set['MC'].keys()
 
     num_features = len(perc_alt_inv_set['MC'].keys())
 
-    print num_features
+    print (num_features)
 
     feature_matrix = np.zeros((13,num_features))
     strain_labels = []
@@ -46,8 +46,8 @@ def cluster_strains(folder):
     ## Clustering Stuff
     estimator = KMeans(init='k-means++', n_clusters=2, n_init=10)
     estimator.fit(feature_matrix)
-    print estimator.labels_
-    print strain_labels
+    print (estimator.labels_)
+    print (strain_labels)
     #centroids,labels,inertia = k_means(feature_matrix,2)
     
     ## Random Forests for extracting important features
@@ -65,7 +65,7 @@ def cluster_strains(folder):
     
 
     for i in range(0,10):
-        print inversion_features[indices[i]]
+        print (inversion_features[indices[i]])
 
 def output_inversions(folder,threshold):
     """ Output to a file all the inversions above a certain threshold 
@@ -83,7 +83,7 @@ def output_inversions(folder,threshold):
 
     FILE_HANDLE = open('output_inversions_'+str(threshold)+".tsv",'w')
     output_write = "\t".join(common_inversions)
-    print >> FILE_HANDLE,"Strain"+"\t"+output_write
+    FILE_HANDLE.write("Strain"+"\t"+output_write+"\n")
 
     for strain in abs_alt.keys():
         for inversion in common_inversions:
@@ -93,7 +93,7 @@ def output_inversions(folder,threshold):
             start = int(match.group(2).replace(',',''))
             stop = int(match.group(3).replace(',',''))
             length = stop-start
-            print >> FILE_HANDLE,strain+"\t"+str(length)+"\t"+str(perc_alt[strain][inversion])+"\t"+str(perc_ref[strain][inversion])+"\t"+str(abs_alt[strain][inversion])+"\t"+str(abs_ref[strain][inversion])
+            FILE_HANDLE.write(strain+"\t"+str(length)+"\t"+str(perc_alt[strain][inversion])+"\t"+str(perc_ref[strain][inversion])+"\t"+str(abs_alt[strain][inversion])+"\t"+str(abs_ref[strain][inversion])+"\n")
 
     FILE_HANDLE.close()
 
@@ -167,9 +167,11 @@ def parse_geno_file(folder,return_flag):
                 abs_ref_inv[strain][key] = float(ref_allele[key])
                 perc_alt_inv[strain][key] = float(alt_allele[key])/(alt_allele[key]+ref_allele[key])
                 perc_ref_inv[strain][key] = float(ref_allele[key])/(alt_allele[key]+ref_allele[key])
-     
-                
-
+            else:
+                with open('temp_wierd.txt','a') as TEMP_WIERD:
+                    TEMP_WIERD.write(strain+"\t"+key+"\n")
+    with open('temp_weird.txt','a') as TEMP_WEIRD:
+        TEMP_WEIRD.write('\n\n')
     ## Keep only the common inversions, i.e. those between MC and the rest 
     all_inversions = []
     common_inversions = []
@@ -252,6 +254,7 @@ def parse_geno_file(folder,return_flag):
     else:
         cichlid = 'MC'
 
+
     for inversion in ordered_rock:
         alternate_allele_sum_rock = 0
         reference_allele_sum_rock = 0
@@ -262,10 +265,12 @@ def parse_geno_file(folder,return_flag):
             alternate_allele_sum_rock = alternate_allele_sum_rock + abs_alt_inv_set[strain][inversion]
             reference_allele_sum_rock = reference_allele_sum_rock + abs_ref_inv_set[strain][inversion]
 
+    
+
         abs_alt_set['Rock'].append(alternate_allele_sum_rock)
         perc_alt_set['Rock'].append(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock)))
         if(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock)) > float(sys.argv[3])):
-            print inversion+"\tRock\t"+cichlid
+            print (inversion+"\tRock\t"+cichlid)
         
     for inversion in ordered_sand:
         alternate_allele_sum_rock = 0
@@ -282,7 +287,7 @@ def parse_geno_file(folder,return_flag):
         perc_alt_set['Sand'].append(float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand)))
         
         if(float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand)) > float(sys.argv[3])):
-            print inversion+"\tSand\t"+cichlid
+            print (inversion+"\tSand\t"+cichlid)
 
         #with open('log_file.txt','a') as LOG_FILE:
             #if(float((alternate_allele_sum_rock)/(alternate_allele_sum_rock + reference_allele_sum_rock))>float(sys.argv[2]) or float((alternate_allele_sum_sand)/(alternate_allele_sum_sand + reference_allele_sum_sand))>float(sys.argv[3])):
@@ -292,7 +297,7 @@ def parse_geno_file(folder,return_flag):
             
     if return_flag == True:
         #print len([abs_alt_inv_set,abs_ref_inv_set,perc_alt_inv_set,perc_ref_inv_set])
-        return perc_alt_inv_set
+        return [abs_alt_inv_set,perc_alt_inv_set]
     else:
         return [abs_alt_set,perc_alt_set]
 
@@ -531,7 +536,7 @@ S = 'MC' ## Global Plot Variables for button initializations
 D = "%"
 base = 'MC'
 if(len(sys.argv) < 3):
-    print "Run the program as : ./create_plot.py <input_folder> <threshold>"
+    print ("Run the program as : ./create_plot.py <input_folder> <threshold>")
     sys.exit()
 
 folder = sys.argv[1]
