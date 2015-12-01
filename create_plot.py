@@ -197,8 +197,8 @@ def parse_geno_file(folder,return_flag):
     abs_ref_inv_set = defaultdict(dict)
     perc_ref_inv_set = defaultdict(dict)
 
-    Rock = ['AC', 'CL','CM','CN','TI','PN','MC']
-    Sand = ['MZ','DC','LF','MP','MS','CV']
+    Sand = ['AC', 'CL','CM','CN','TI','CV','MC']
+    Rock = ['MZ','AC','PN','LF','MP']
 
 
     sand_inversions = []
