@@ -21,18 +21,18 @@ with open(inversion_file,'r') as INV_FILE:
     for line in INV_FILE:
         line = line.rstrip('\n')
         scaffold = line.split('\t')[0]
-        start = line.split('\t')[1]
-        stop = line.split('\t')[2]
+        start = int(line.split('\t')[1])
+        stop = int(line.split('\t')[2])
         print (scaffold)
-        inversion = mzebra_ref[scaffold][int(start):int(stop)].seq
+        inversion = mzebra_ref[scaffold][start:stop].seq
         inversion_seq = return_bioseq_obj(inversion)
         if(start==0):
-            inversion_bp_1 = mzebra_ref[scaffold][int(start):int(start)+1000].seq
+            inversion_bp_1 = mzebra_ref[scaffold][start:start+1000].seq
         elif(stop == len(inversion)):
-            inversion_bp_2 = mzebra_ref[scaffold][int(stop)-1000:int(stop)].seq
+            inversion_bp_2 = mzebra_ref[scaffold][stop-1000:stop].seq
         else:
-            inversion_bp_1 = mzebra_ref[scaffold][int(start):int(start)+1000].seq
-            inversion_bp_2 = mzebra_ref[scaffold][int(stop)-1000:int(stop)].seq
+            inversion_bp_1 = mzebra_ref[scaffold][start:start+1000].seq
+            inversion_bp_2 = mzebra_ref[scaffold][stop-1000:stop].seq
         with open('temp.fasta','w') as TEMP, open('scaffold.fasta','w') as SCAFFOLD:
             #TEMP.write(">%s_%s_%s\n"%(scaffold,start,stop))
             #TEMP.write(inversion)
